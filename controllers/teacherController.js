@@ -2,7 +2,7 @@ const Teacher = require('../models/Teacher');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../utils/jwtUtils');
 
-// Fonction pour l'inscription
+// Function for registration
 exports.register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
   }
 };
 
-// Fonction pour la connexion
+// Function for login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -41,12 +41,15 @@ exports.login = async (req, res) => {
   }
 };
 
-// Fonction pour mettre à jour le profil
+// Function for updating profile
 exports.updateProfile = async (req, res) => {
   const { teacherId } = req.params;
   const updates = req.body;
   try {
     const updatedTeacher = await Teacher.findByIdAndUpdate(teacherId, updates, { new: true });
+    if (!updatedTeacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
     res.status(200).json({ message: 'Profile updated successfully', updatedTeacher });
   } catch (error) {
     console.error('Error updating profile:', error);
